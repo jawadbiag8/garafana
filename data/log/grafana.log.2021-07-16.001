@@ -1,0 +1,21 @@
+t=2021-07-15T16:40:28+0500 lvl=info msg="Request Completed" logger=context userId=0 orgId=0 uname= method=GET path=/ status=302 remote_addr=[::1] time_ms=1 size=29 referer=
+t=2021-07-15T17:39:26+0500 lvl=info msg="Database locked, sleeping then retrying" logger=sqlstore error="database is locked" retry=0
+t=2021-07-15T18:30:46+0500 lvl=info msg="Starting Grafana" logger=server version=8.1.0-27148pre commit=91751d7e38 branch=main compiled=2021-06-29T16:17:02+0500
+t=2021-07-15T18:30:46+0500 lvl=info msg="Config loaded from" logger=settings file="C:\\Program Files\\GrafanaLabs\\grafana/conf/defaults.ini"
+t=2021-07-15T18:30:46+0500 lvl=info msg="Path Home" logger=settings path="C:\\Program Files\\GrafanaLabs\\grafana"
+t=2021-07-15T18:30:46+0500 lvl=info msg="Path Data" logger=settings path="C:\\Program Files\\GrafanaLabs\\grafana\\data"
+t=2021-07-15T18:30:46+0500 lvl=info msg="Path Logs" logger=settings path="C:\\Program Files\\GrafanaLabs\\grafana\\data\\log"
+t=2021-07-15T18:30:46+0500 lvl=info msg="Path Plugins" logger=settings path="C:\\Program Files\\GrafanaLabs\\grafana\\data\\plugins"
+t=2021-07-15T18:30:46+0500 lvl=info msg="Path Provisioning" logger=settings path="C:\\Program Files\\GrafanaLabs\\grafana\\conf\\provisioning"
+t=2021-07-15T18:30:46+0500 lvl=info msg="App mode production" logger=settings
+t=2021-07-15T18:30:46+0500 lvl=info msg="Connecting to DB" logger=sqlstore dbtype=sqlite3
+t=2021-07-15T18:30:46+0500 lvl=warn msg="SQLite database file has broader permissions than it should" logger=sqlstore path="C:\\Program Files\\GrafanaLabs\\grafana\\data\\grafana.db" mode=-rw-rw-rw- expected=-rw-r-----
+t=2021-07-15T18:30:47+0500 lvl=info msg="Starting DB migrations" logger=migrator
+t=2021-07-15T18:30:47+0500 lvl=info msg="migrations completed" logger=migrator performed=0 skipped=330 duration=6.301ms
+t=2021-07-15T18:30:48+0500 lvl=info msg="Starting plugin search" logger=plugins
+t=2021-07-15T18:33:10+0500 lvl=info msg="Registering plugin" logger=plugins id=input
+t=2021-07-15T18:33:10+0500 lvl=info msg="Registering plugin" logger=plugins id=grafana-plugin-admin-app
+t=2021-07-15T18:33:24+0500 lvl=info msg="Registering plugin" logger=plugins id=yesoreyeram-boomtheme-panel
+t=2021-07-15T18:33:35+0500 lvl=info msg="Live Push Gateway initialization" logger=live.push_http
+t=2021-07-15T18:33:42+0500 lvl=info msg="HTTP Server Listen" logger=http.server address=[::]:3000 protocol=http subUrl= socket=
+t=2021-07-15T18:37:25+0500 lvl=info msg="Request Completed" logger=context userId=0 orgId=0 uname= method=GET path=/ status=302 remote_addr=[::1] time_ms=0 size=29 referer=
