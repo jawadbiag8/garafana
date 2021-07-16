@@ -45,7 +45,6 @@ const SETTINGS_KEYS = {
 };
 
 interface Props {
-  width: number;
   logRows: LogRowModel[];
   logsMeta?: LogsMetaItem[];
   logsSeries?: DataFrame[];
@@ -83,8 +82,8 @@ interface State {
 }
 
 export class UnthemedLogs extends PureComponent<Props, State> {
-  flipOrderTimer?: number;
-  cancelFlippingTimer?: number;
+  flipOrderTimer: NodeJS.Timeout;
+  cancelFlippingTimer: NodeJS.Timeout;
   topLogsRef = createRef<HTMLDivElement>();
 
   state: State = {
@@ -100,19 +99,14 @@ export class UnthemedLogs extends PureComponent<Props, State> {
   };
 
   componentWillUnmount() {
-    if (this.flipOrderTimer) {
-      window.clearTimeout(this.flipOrderTimer);
-    }
-
-    if (this.cancelFlippingTimer) {
-      window.clearTimeout(this.cancelFlippingTimer);
-    }
+    clearTimeout(this.flipOrderTimer);
+    clearTimeout(this.cancelFlippingTimer);
   }
 
   onChangeLogsSortOrder = () => {
     this.setState({ isFlipping: true });
     // we are using setTimeout here to make sure that disabled button is rendered before the rendering of reordered logs
-    this.flipOrderTimer = window.setTimeout(() => {
+    this.flipOrderTimer = setTimeout(() => {
       this.setState((prevState) => {
         if (prevState.logsSortOrder === null || prevState.logsSortOrder === LogsSortOrder.Descending) {
           return { logsSortOrder: LogsSortOrder.Ascending };
@@ -120,7 +114,7 @@ export class UnthemedLogs extends PureComponent<Props, State> {
         return { logsSortOrder: LogsSortOrder.Descending };
       });
     }, 0);
-    this.cancelFlippingTimer = window.setTimeout(() => this.setState({ isFlipping: false }), 1000);
+    this.cancelFlippingTimer = setTimeout(() => this.setState({ isFlipping: false }), 1000);
   };
 
   onEscapeNewlines = () => {
@@ -234,7 +228,6 @@ export class UnthemedLogs extends PureComponent<Props, State> {
 
   render() {
     const {
-      width,
       logRows,
       logsMeta,
       logsSeries,
@@ -286,7 +279,6 @@ export class UnthemedLogs extends PureComponent<Props, State> {
           <ExploreGraphNGPanel
             data={logsSeries}
             height={150}
-            width={width}
             tooltipDisplayMode={TooltipDisplayMode.Multi}
             absoluteRange={visibleRange || absoluteRange}
             timeZone={timeZone}

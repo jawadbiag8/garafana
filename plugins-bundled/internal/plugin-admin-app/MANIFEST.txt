@@ -8,8 +8,8 @@ Hash: SHA512
   "signedByOrg": "grafana",
   "signedByOrgName": "Grafana Labs",
   "plugin": "grafana-plugin-admin-app",
-  "version": "8.1.0-pre",
-  "time": 1624965892331,
+  "version": "8.0.1",
+  "time": 1623325983165,
   "keyId": "7e4d0c6a708866e7",
   "files": {
     "CHANGELOG.md": "370fda03d4c8b89272a0b951669df85ec026070765cdfa606d91af59db011669",
@@ -17,16 +17,16 @@ Hash: SHA512
     "img/logo.svg": "13ac6497cc44d7ab23ce9d378e1645196018536955c9bc281126e053109f1b09",
     "module.js": "2ffaa54da698dcd15c533bc64ef6646917e4d01a109c8189e35dec2cd8cf630e",
     "module.js.map": "902d03f03332f6563afed84c13fc64c8bc77f20faf21fb3f6d89d7fe0c07d28c",
-    "plugin.json": "6e086a47f81ee56a582e54c8a01fe08fb0c98c51a0056a9d802aeb0a198ea5f6"
+    "plugin.json": "73a46518d76f5e4c4e4d82306e04da8e2633b9167128bc001ec0acc9f59ea440"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.1
 Comment: https://openpgpjs.org
 
-wqAEARMKAAYFAmDbAwQACgkQfk0ManCIZudxygIHTBVvIlC4uNgZuWoHY2i6
-B18WzoVgOCk+zJ5Dx9C5rx8eEfNClguSXBpjRcbOqC99z672LbwLwaiY78u8
-xlmDY6YCB2m1G3pRawaUDhbL37H3fKqNNy+mnNlNTgIGrlEDt9q8v0TkMBSU
-Go/c1Tn4MuLmpsb6t5efe6PMV2boEzjOKL4D
-=NPw0
+wqEEARMKAAYFAmDB/R8ACgkQfk0ManCIZudd+QIIpmSvzlMQZdRIRxyziAsb
+/6Gg5boo1tGmKWy8gIp2ZbyQi52PW+IUpA6mdAERxOUDN/pqBnIm0Mcu9ziP
+1fPIAq8CCQE0vk4uEM4i4McWNPIlsjp9mT4/pUb6i16Y/qHKTUxW9KhsLxQC
+kpaq17LVkmrd3QW7kyXHKNMvSrQL4PzS3DZiuA==
+=MdV0
 -----END PGP SIGNATURE-----

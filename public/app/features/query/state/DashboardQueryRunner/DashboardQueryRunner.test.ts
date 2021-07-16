@@ -247,7 +247,7 @@ function getExpectedForAllResult(): DashboardQueryRunnerResult {
     },
     annotations: [
       {
-        color: '#ffc0cb',
+        color: 'pink',
         id: 'Legacy',
         isRegion: false,
         source: {
@@ -262,7 +262,7 @@ function getExpectedForAllResult(): DashboardQueryRunnerResult {
         type: 'Test',
       },
       {
-        color: '#ffc0cb',
+        color: 'pink',
         id: 'NextGen',
         isRegion: false,
         source: {
@@ -285,7 +285,7 @@ function getExpectedForAllResult(): DashboardQueryRunnerResult {
           id: 'Snapshotted',
           name: 'Test',
         },
-        color: '#ffc0cb',
+        color: 'pink',
         isRegion: true,
         source: {
           datasource: 'Legacy',

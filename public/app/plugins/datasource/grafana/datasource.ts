@@ -24,14 +24,12 @@ export class GrafanaDatasource extends DataSourceApi<GrafanaQuery> {
 
   query(request: DataQueryRequest<GrafanaQuery>): Observable<DataQueryResponse> {
     const queries: Array<Observable<DataQueryResponse>> = [];
-    const templateSrv = getTemplateSrv();
     for (const target of request.targets) {
       if (target.hide) {
         continue;
       }
       if (target.queryType === GrafanaQueryType.LiveMeasurements) {
-        let channel = templateSrv.replace(target.channel, request.scopedVars);
-        const { filter } = target;
+        let { channel, filter } = target;
 
         // Help migrate pre-release channel paths saved in dashboards
         // NOTE: this should be removed before V8 is released

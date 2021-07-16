@@ -2,7 +2,7 @@ import React from 'react';
 import { hot } from 'react-hot-loader';
 import { css, cx } from '@emotion/css';
 import { compose } from 'redux';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import memoizeOne from 'memoize-one';
 import { selectors } from '@grafana/e2e-selectors';
@@ -14,7 +14,18 @@ import {
   Collapse,
   TooltipDisplayMode,
 } from '@grafana/ui';
-import { AbsoluteTimeRange, DataQuery, GrafanaTheme, LoadingState, RawTimeRange, DataFrame } from '@grafana/data';
+import {
+  AbsoluteTimeRange,
+  DataQuery,
+  DataSourceApi,
+  GrafanaTheme,
+  LoadingState,
+  PanelData,
+  RawTimeRange,
+  TimeZone,
+  LogsModel,
+  DataFrame,
+} from '@grafana/data';
 
 import LogsContainer from './LogsContainer';
 import QueryRows from './QueryRows';
@@ -60,8 +71,36 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
 });
 
 export interface ExploreProps {
+  changeSize: typeof changeSize;
+  datasourceInstance: DataSourceApi | null;
+  datasourceMissing: boolean;
   exploreId: ExploreId;
+  modifyQueries: typeof modifyQueries;
+  scanning?: boolean;
+  scanRange?: RawTimeRange;
+  scanStart: typeof scanStart;
+  scanStopAction: typeof scanStopAction;
+  setQueries: typeof setQueries;
+  queryKeys: string[];
+  isLive: boolean;
+  syncedTimes: boolean;
+  updateTimeRange: typeof updateTimeRange;
+  graphResult: DataFrame[] | null;
+  logsResult?: LogsModel;
+  absoluteRange: AbsoluteTimeRange;
+  timeZone: TimeZone;
+  onHiddenSeriesChanged?: (hiddenSeries: string[]) => void;
+  queryResponse: PanelData;
+  originPanelId: number;
+  addQueryRow: typeof addQueryRow;
   theme: GrafanaTheme;
+  loading: boolean;
+  showMetrics: boolean;
+  showTable: boolean;
+  showLogs: boolean;
+  showTrace: boolean;
+  showNodeGraph: boolean;
+  splitOpen: typeof splitOpen;
 }
 
 enum ExploreDrawer {
@@ -72,8 +111,6 @@ enum ExploreDrawer {
 interface ExploreState {
   openDrawer?: ExploreDrawer;
 }
-
-export type Props = ExploreProps & ConnectedProps<typeof connector>;
 
 /**
  * Explore provides an area for quick query iteration for a given datasource.
@@ -99,8 +136,8 @@ export type Props = ExploreProps & ConnectedProps<typeof connector>;
  * The result viewers determine some of the query options sent to the datasource, e.g.,
  * `format`, to indicate eventual transformations by the datasources' result transformers.
  */
-export class Explore extends React.PureComponent<Props, ExploreState> {
-  constructor(props: Props) {
+export class Explore extends React.PureComponent<ExploreProps, ExploreState> {
+  constructor(props: ExploreProps) {
     super(props);
     this.state = {
       openDrawer: undefined,
@@ -192,14 +229,13 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
     );
   }
 
-  renderGraphPanel(width: number) {
-    const { graphResult, absoluteRange, timeZone, splitOpen, queryResponse, loading, theme } = this.props;
+  renderGraphPanel() {
+    const { graphResult, absoluteRange, timeZone, splitOpen, queryResponse, loading } = this.props;
     return (
       <Collapse label="Graph" loading={loading} isOpen>
         <ExploreGraphNGPanel
           data={graphResult!}
           height={400}
-          width={width - theme.panelPadding * 2}
           tooltipDisplayMode={TooltipDisplayMode.Single}
           absoluteRange={absoluteRange}
           timeZone={timeZone}
@@ -223,14 +259,12 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
     );
   }
 
-  renderLogsPanel(width: number) {
-    const { exploreId, syncedTimes, theme } = this.props;
-
+  renderLogsPanel() {
+    const { exploreId, syncedTimes } = this.props;
     return (
       <LogsContainer
         exploreId={exploreId}
         syncedTimes={syncedTimes}
-        width={width - theme.panelPadding * 2}
         onClickFilterLabel={this.onClickFilterLabel}
         onClickFilterOutLabel={this.onClickFilterOutLabel}
         onStartScanning={this.onStartScanning}
@@ -323,10 +357,10 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
                       {showPanels && (
                         <>
                           {showMetrics && graphResult && (
-                            <ErrorBoundaryAlert>{this.renderGraphPanel(width)}</ErrorBoundaryAlert>
+                            <ErrorBoundaryAlert>{this.renderGraphPanel()}</ErrorBoundaryAlert>
                           )}
                           {showTable && <ErrorBoundaryAlert>{this.renderTablePanel(width)}</ErrorBoundaryAlert>}
-                          {showLogs && <ErrorBoundaryAlert>{this.renderLogsPanel(width)}</ErrorBoundaryAlert>}
+                          {showLogs && <ErrorBoundaryAlert>{this.renderLogsPanel()}</ErrorBoundaryAlert>}
                           {showNodeGraph && <ErrorBoundaryAlert>{this.renderNodeGraphPanel()}</ErrorBoundaryAlert>}
                           {showTrace && <ErrorBoundaryAlert>{this.renderTraceViewPanel()}</ErrorBoundaryAlert>}
                         </>
@@ -357,7 +391,7 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
   }
 }
 
-function mapStateToProps(state: StoreState, { exploreId }: ExploreProps) {
+function mapStateToProps(state: StoreState, { exploreId }: ExploreProps): Partial<ExploreProps> {
   const explore = state.explore;
   const { syncedTimes } = explore;
   const item: ExploreItemState = explore[exploreId]!;
@@ -399,7 +433,7 @@ function mapStateToProps(state: StoreState, { exploreId }: ExploreProps) {
   };
 }
 
-const mapDispatchToProps = {
+const mapDispatchToProps: Partial<ExploreProps> = {
   changeSize,
   modifyQueries,
   scanStart,
@@ -410,6 +444,8 @@ const mapDispatchToProps = {
   splitOpen,
 };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(hot(module), connector, withTheme)(Explore) as React.ComponentType<{ exploreId: ExploreId }>;
+export default compose(
+  hot(module),
+  connect(mapStateToProps, mapDispatchToProps),
+  withTheme
+)(Explore) as React.ComponentType<{ exploreId: ExploreId }>;

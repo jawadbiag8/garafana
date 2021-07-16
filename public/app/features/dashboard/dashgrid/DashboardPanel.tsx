@@ -1,5 +1,7 @@
 // Libraries
 import React, { PureComponent } from 'react';
+import classNames from 'classnames';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { connect, ConnectedProps } from 'react-redux';
 
 // Components
@@ -13,6 +15,8 @@ import { initDashboardPanel } from '../state/actions';
 import { DashboardModel, PanelModel } from '../state';
 import { StoreState } from 'app/types';
 import { PanelPlugin } from '@grafana/data';
+import { stylesFactory } from '@grafana/ui';
+import { css } from 'emotion';
 
 export interface OwnProps {
   panel: PanelModel;
@@ -20,8 +24,6 @@ export interface OwnProps {
   isEditing: boolean;
   isViewing: boolean;
   isInView: boolean;
-  width: number;
-  height: number;
 }
 
 export interface State {
@@ -67,40 +69,51 @@ export class DashboardPanelUnconnected extends PureComponent<Props, State> {
   }
 
   renderPanel(plugin: PanelPlugin) {
-    const { dashboard, panel, isViewing, isInView, isEditing, width, height } = this.props;
-
-    if (plugin.angularPanelCtrl) {
-      return (
-        <PanelChromeAngular
-          plugin={plugin}
-          panel={panel}
-          dashboard={dashboard}
-          isViewing={isViewing}
-          isEditing={isEditing}
-          isInView={isInView}
-          width={width}
-          height={height}
-        />
-      );
-    }
+    const { dashboard, panel, isViewing, isInView, isEditing } = this.props;
 
     return (
-      <PanelChrome
-        plugin={plugin}
-        panel={panel}
-        dashboard={dashboard}
-        isViewing={isViewing}
-        isEditing={isEditing}
-        isInView={isInView}
-        width={width}
-        height={height}
-      />
+      <AutoSizer>
+        {({ width, height }) => {
+          if (width === 0) {
+            return null;
+          }
+
+          if (plugin.angularPanelCtrl) {
+            return (
+              <PanelChromeAngular
+                plugin={plugin}
+                panel={panel}
+                dashboard={dashboard}
+                isViewing={isViewing}
+                isEditing={isEditing}
+                isInView={isInView}
+                width={width}
+                height={height}
+              />
+            );
+          }
+
+          return (
+            <PanelChrome
+              plugin={plugin}
+              panel={panel}
+              dashboard={dashboard}
+              isViewing={isViewing}
+              isEditing={isEditing}
+              isInView={isInView}
+              width={width}
+              height={height}
+            />
+          );
+        }}
+      </AutoSizer>
     );
   }
 
   render() {
-    const { plugin } = this.props;
+    const { isViewing, plugin } = this.props;
     const { isLazy } = this.state;
+    const styles = getStyles();
 
     // If we have not loaded plugin exports yet, wait
     if (!plugin) {
@@ -112,8 +125,27 @@ export class DashboardPanelUnconnected extends PureComponent<Props, State> {
       return null;
     }
 
-    return this.renderPanel(plugin);
+    return (
+      <div
+        className={isViewing === true ? classNames(styles.panelWrapper, styles.panelWrapperView) : styles.panelWrapper}
+      >
+        {this.renderPanel(plugin)}
+      </div>
+    );
   }
 }
+
+export const getStyles = stylesFactory(() => {
+  return {
+    panelWrapper: css`
+      height: 100%;
+      position: relative;
+    `,
+    panelWrapperView: css`
+      flex: 1 1 0;
+      height: 90%;
+    `,
+  };
+});
 
 export const DashboardPanel = connector(DashboardPanelUnconnected);

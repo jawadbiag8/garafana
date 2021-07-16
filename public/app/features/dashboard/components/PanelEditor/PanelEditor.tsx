@@ -245,8 +245,6 @@ export class PanelEditorUnconnected extends PureComponent<Props> {
                       isEditing={true}
                       isViewing={false}
                       isInView={true}
-                      width={width}
-                      height={height}
                     />
                   </div>
                 </div>

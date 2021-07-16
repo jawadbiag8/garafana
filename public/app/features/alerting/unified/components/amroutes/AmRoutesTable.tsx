@@ -1,7 +1,13 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, HorizontalGroup, IconButton } from '@grafana/ui';
 import { AmRouteReceiver, FormAmRoute } from '../../types/amroutes';
-import { prepareItems } from '../../utils/dynamicTable';
+import {
+  addCustomExpandedContent,
+  collapseItem,
+  expandItem,
+  prepareItems,
+  removeCustomExpandedContent,
+} from '../../utils/dynamicTable';
 import { DynamicTable, DynamicTableColumnProps, DynamicTableItemProps } from '../DynamicTable';
 import { AmRoutesExpandedForm } from './AmRoutesExpandedForm';
 import { AmRoutesExpandedRead } from './AmRoutesExpandedRead';
@@ -19,13 +25,42 @@ type RouteTableColumnProps = DynamicTableColumnProps<FormAmRoute>;
 type RouteTableItemProps = DynamicTableItemProps<FormAmRoute>;
 
 export const AmRoutesTable: FC<AmRoutesTableProps> = ({ isAddMode, onCancelAdd, onChange, receivers, routes }) => {
-  const [editMode, setEditMode] = useState(false);
+  const [items, setItems] = useState<RouteTableItemProps[]>([]);
 
-  const [expandedId, setExpandedId] = useState<string | number>();
+  const getRenderEditExpandedContent = useCallback(
+    // eslint-disable-next-line react/display-name
+    (item: RouteTableItemProps, index: number) => () => (
+      <AmRoutesExpandedForm
+        onCancel={() => {
+          setItems((items) => {
+            let newItems = collapseItem(items, item.id);
+            newItems = removeCustomExpandedContent(newItems, item.id);
 
-  const expandItem = useCallback((item: RouteTableItemProps) => setExpandedId(item.id), []);
+            return newItems;
+          });
 
-  const collapseItem = useCallback(() => setExpandedId(undefined), []);
+          if (isAddMode) {
+            onCancelAdd();
+          }
+        }}
+        onSave={(data) => {
+          const newRoutes = [...routes];
+
+          newRoutes[index] = {
+            ...newRoutes[index],
+            ...data,
+          };
+
+          setItems((items) => collapseItem(items, item.id));
+
+          onChange(newRoutes);
+        }}
+        receivers={receivers}
+        routes={item.data}
+      />
+    ),
+    [isAddMode, onCancelAdd, onChange, receivers, routes]
+  );
 
   const cols: RouteTableColumnProps[] = [
     {
@@ -56,10 +91,13 @@ export const AmRoutesTable: FC<AmRoutesTableProps> = ({ isAddMode, onCancelAdd, 
           return null;
         }
 
-        const expandWithCustomContent = () => {
-          expandItem(item);
-          setEditMode(true);
-        };
+        const expandWithCustomContent = () =>
+          setItems((items) => {
+            let newItems = expandItem(items, item.id);
+            newItems = addCustomExpandedContent(newItems, item.id, getRenderEditExpandedContent(item, index));
+
+            return newItems;
+          });
 
         return (
           <HorizontalGroup>
@@ -84,63 +122,50 @@ export const AmRoutesTable: FC<AmRoutesTableProps> = ({ isAddMode, onCancelAdd, 
     },
   ];
 
-  const items = useMemo(() => prepareItems(routes), [routes]);
-
-  // expand the last item when adding
   useEffect(() => {
-    if (isAddMode && items.length) {
-      setExpandedId(items[items.length - 1].id);
-    }
-  }, [isAddMode, items]);
+    const items = prepareItems(routes).map((item, index, arr) => {
+      if (isAddMode && index === arr.length - 1) {
+        return {
+          ...item,
+          isExpanded: true,
+          renderExpandedContent: getRenderEditExpandedContent(item, index),
+        };
+      }
+
+      return {
+        ...item,
+        isExpanded: false,
+        renderExpandedContent: undefined,
+      };
+    });
+
+    setItems(items);
+  }, [routes, getRenderEditExpandedContent, isAddMode]);
 
   return (
     <DynamicTable
       cols={cols}
       isExpandable={true}
       items={items}
+      onCollapse={(item: RouteTableItemProps) => setItems((items) => collapseItem(items, item.id))}
+      onExpand={(item: RouteTableItemProps) => setItems((items) => expandItem(items, item.id))}
       testIdGenerator={() => 'am-routes-row'}
-      onCollapse={collapseItem}
-      onExpand={expandItem}
-      isExpanded={(item) => expandedId === item.id}
-      renderExpandedContent={(item: RouteTableItemProps, index) =>
-        isAddMode || editMode ? (
-          <AmRoutesExpandedForm
-            onCancel={() => {
-              if (isAddMode) {
-                onCancelAdd();
-              }
-              setEditMode(false);
-            }}
-            onSave={(data) => {
-              const newRoutes = [...routes];
+      renderExpandedContent={(item: RouteTableItemProps, index) => (
+        <AmRoutesExpandedRead
+          onChange={(data) => {
+            const newRoutes = [...routes];
 
-              newRoutes[index] = {
-                ...newRoutes[index],
-                ...data,
-              };
-              setEditMode(false);
-              onChange(newRoutes);
-            }}
-            receivers={receivers}
-            routes={item.data}
-          />
-        ) : (
-          <AmRoutesExpandedRead
-            onChange={(data) => {
-              const newRoutes = [...routes];
+            newRoutes[index] = {
+              ...item.data,
+              ...data,
+            };
 
-              newRoutes[index] = {
-                ...item.data,
-                ...data,
-              };
-
-              onChange(newRoutes);
-            }}
-            receivers={receivers}
-            routes={item.data}
-          />
-        )
-      }
+            onChange(newRoutes);
+          }}
+          receivers={receivers}
+          routes={item.data}
+        />
+      )}
     />
   );
 };

@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import { debounce, isNil } from 'lodash';
 import { AsyncSelect } from '@grafana/ui';
-import { SelectableValue } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { Team } from 'app/types';
+
+export interface Team {
+  id: number;
+  label: string;
+  name: string;
+  avatarUrl: string;
+}
 
 export interface Props {
-  onSelected: (team: SelectableValue<Team>) => void;
+  onSelected: (team: Team) => void;
   className?: string;
 }
 
@@ -37,11 +42,13 @@ export class TeamPicker extends Component<Props, State> {
 
     return getBackendSrv()
       .get(`/api/teams/search?perpage=100&page=1&query=${query}`)
-      .then((result: { teams: Team[] }) => {
-        const teams: Array<SelectableValue<Team>> = result.teams.map((team) => {
+      .then((result: any) => {
+        const teams = result.teams.map((team: any) => {
           return {
-            value: team,
+            id: team.id,
+            value: team.id,
             label: team.name,
+            name: team.name,
             imgUrl: team.avatarUrl,
           };
         });

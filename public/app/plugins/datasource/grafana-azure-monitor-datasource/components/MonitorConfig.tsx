@@ -35,7 +35,6 @@ export const MonitorConfig: FunctionComponent<Props> = (props: Props) => {
         azureCloudOptions={azureClouds}
         onCredentialsChange={onCredentialsChange}
         getSubscriptions={getSubscriptions}
-        disabled={props.options.readOnly}
       />
     </>
   );

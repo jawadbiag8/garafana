@@ -1,6 +1,5 @@
 import React from 'react';
-import { QueryEditorHelpProps } from '@grafana/data';
-import { PromQuery } from '../types';
+import { QueryEditorHelpProps, DataQuery } from '@grafana/data';
 
 const CHEAT_SHEET_ITEMS = [
   {
@@ -26,7 +25,7 @@ const CHEAT_SHEET_ITEMS = [
   },
 ];
 
-const PromCheatSheet = (props: QueryEditorHelpProps<PromQuery>) => (
+const PromCheatSheet = (props: QueryEditorHelpProps) => (
   <div>
     <h2>PromQL Cheat Sheet</h2>
     {CHEAT_SHEET_ITEMS.map((item, index) => (
@@ -35,7 +34,7 @@ const PromCheatSheet = (props: QueryEditorHelpProps<PromQuery>) => (
         {item.expression ? (
           <div
             className="cheat-sheet-item__example"
-            onClick={(e) => props.onClickExample({ refId: 'A', expr: item.expression })}
+            onClick={(e) => props.onClickExample({ refId: 'A', expr: item.expression } as DataQuery)}
           >
             <code>{item.expression}</code>
           </div>

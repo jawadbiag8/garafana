@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { hot } from 'react-hot-loader';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { NavModel } from '@grafana/data';
 import { Alert, Button, LegacyForms } from '@grafana/ui';
 const { FormField } = LegacyForms;
@@ -29,13 +29,19 @@ import {
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { contextSrv } from 'app/core/core';
 
-interface OwnProps extends GrafanaRouteComponentProps<{}, { username: string }> {
+interface Props extends GrafanaRouteComponentProps<{}, { username: string }> {
   navModel: NavModel;
   ldapConnectionInfo: LdapConnectionInfo;
-  ldapUser?: LdapUser;
-  ldapSyncInfo?: SyncInfo;
-  ldapError?: LdapError;
+  ldapUser: LdapUser;
+  ldapSyncInfo: SyncInfo;
+  ldapError: LdapError;
   userError?: LdapError;
+
+  loadLdapState: typeof loadLdapState;
+  loadLdapSyncStatus: typeof loadLdapSyncStatus;
+  loadUserMapping: typeof loadUserMapping;
+  clearUserError: typeof clearUserError;
+  clearUserMappingInfo: typeof clearUserMappingInfo;
 }
 
 interface State {
@@ -157,7 +163,4 @@ const mapDispatchToProps = {
   clearUserMappingInfo,
 };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type Props = OwnProps & ConnectedProps<typeof connector>;
-
-export default hot(module)(connector(LdapPage));
+export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(LdapPage));

@@ -5,19 +5,19 @@ import { DataSourcePicker } from '@grafana/runtime';
 import { Icon, Input, FieldValidationMessage, useStyles } from '@grafana/ui';
 import { selectors } from '@grafana/e2e-selectors';
 
-export interface Props<TQuery extends DataQuery = DataQuery> {
-  query: TQuery;
-  queries: TQuery[];
+export interface Props {
+  query: DataQuery;
+  queries: DataQuery[];
   disabled?: boolean;
   dataSource: DataSourceInstanceSettings;
   renderExtras?: () => ReactNode;
   onChangeDataSource?: (settings: DataSourceInstanceSettings) => void;
-  onChange: (query: TQuery) => void;
+  onChange: (query: DataQuery) => void;
   onClick: (e: React.MouseEvent) => void;
   collapsedText: string | null;
 }
 
-export const QueryEditorRowHeader = <TQuery extends DataQuery>(props: Props<TQuery>) => {
+export const QueryEditorRowHeader: React.FC<Props> = (props) => {
   const { query, queries, onClick, onChange, collapsedText, renderExtras, disabled } = props;
 
   const styles = useStyles(getStyles);
@@ -123,10 +123,7 @@ export const QueryEditorRowHeader = <TQuery extends DataQuery>(props: Props<TQue
   );
 };
 
-const renderDataSource = <TQuery extends DataQuery>(
-  props: Props<TQuery>,
-  styles: ReturnType<typeof getStyles>
-): ReactNode => {
+const renderDataSource = (props: Props, styles: ReturnType<typeof getStyles>): ReactNode => {
   const { dataSource, onChangeDataSource } = props;
 
   if (!onChangeDataSource) {

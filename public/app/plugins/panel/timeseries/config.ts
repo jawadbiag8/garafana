@@ -17,12 +17,10 @@ import {
   PointVisibility,
   StackingMode,
   commonOptionsBuilder,
-  GraphTresholdsStyleMode,
 } from '@grafana/ui';
 import { LineStyleEditor } from './LineStyleEditor';
 import { FillBellowToEditor } from './FillBelowToEditor';
 import { SpanNullsEditor } from './SpanNullsEditor';
-import { ThresholdsStyleEditor } from './ThresholdsStyleEditor';
 
 export const defaultGraphConfig: GraphFieldConfig = {
   drawStyle: DrawStyle.Line,
@@ -179,19 +177,14 @@ export function getGraphFieldConfig(cfg: GraphFieldConfig): SetFieldConfigOption
       commonOptionsBuilder.addAxisConfig(builder, cfg);
       commonOptionsBuilder.addHideFrom(builder);
 
-      builder.addCustomEditor({
-        id: 'thresholdsStyle',
-        path: 'thresholdsStyle',
+      builder.addSelect({
+        path: 'thresholdsStyle.mode',
         name: 'Show thresholds',
         category: ['Thresholds'],
-        defaultValue: { mode: GraphTresholdsStyleMode.Off },
+        defaultValue: graphFieldOptions.thresholdsDisplayModes[0].value,
         settings: {
           options: graphFieldOptions.thresholdsDisplayModes,
         },
-        editor: ThresholdsStyleEditor,
-        override: ThresholdsStyleEditor,
-        process: identityOverrideProcessor,
-        shouldApply: () => true,
       });
     },
   };

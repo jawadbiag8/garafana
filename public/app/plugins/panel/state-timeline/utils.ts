@@ -1,29 +1,29 @@
 import React from 'react';
 import { XYFieldMatchers } from '@grafana/ui/src/components/GraphNG/types';
 import {
-  ArrayVector,
   DataFrame,
-  FALLBACK_COLOR,
-  Field,
-  FieldColorModeId,
   FieldConfig,
-  FieldType,
   formattedValueToString,
   getFieldDisplayName,
-  getValueFormat,
-  GrafanaTheme2,
   outerJoinDataFrames,
+  Field,
+  FALLBACK_COLOR,
+  FieldType,
+  ArrayVector,
+  FieldColorModeId,
+  getValueFormat,
   ThresholdsMode,
+  GrafanaTheme2,
 } from '@grafana/data';
 import {
+  UPlotConfigBuilder,
   FIXED_UNIT,
   SeriesVisibilityChangeMode,
-  UPlotConfigBuilder,
   UPlotConfigPrepFn,
-  VizLegendItem,
   VizLegendOptions,
+  VizLegendItem,
 } from '@grafana/ui';
-import { getConfig, TimelineCoreOptions } from './timeline';
+import { TimelineCoreOptions, getConfig } from './timeline';
 import { AxisPlacement, ScaleDirection, ScaleOrientation } from '@grafana/ui/src/components/uPlot/config';
 import { TimelineFieldConfig, TimelineOptions } from './types';
 import { PlotTooltipInterpolator } from '@grafana/ui/src/components/uPlot/types';
@@ -401,12 +401,12 @@ export function findNextStateIndex(field: Field, datapointIdx: number) {
   let end;
   let rightPointer = datapointIdx + 1;
 
-  if (rightPointer >= field.values.length) {
+  if (rightPointer === field.values.length) {
     return null;
   }
 
   while (end === undefined) {
-    if (rightPointer >= field.values.length) {
+    if (rightPointer === field.values.length) {
       return null;
     }
     const rightValue = field.values.get(rightPointer);

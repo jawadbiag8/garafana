@@ -140,9 +140,9 @@ export class ShareLink extends PureComponent<Props, State> {
               rel="noopener noreferrer"
               className="external-link"
             >
-              Autosphere image renderer plugin
+              Grafana image renderer plugin
             </a>
-            . Please contact your Grafana administrator to install the plugin.
+            . Please Contact your Autosphere administrator to install the plugin.
           </Alert>
         )}
       </>

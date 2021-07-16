@@ -19,12 +19,12 @@ import { PanelModel } from 'app/features/dashboard/state';
 import { PanelQueryRunner } from '../query/state/PanelQueryRunner';
 
 class MetricsPanelCtrl extends PanelCtrl {
-  declare datasource: DataSourceApi;
+  datasource: DataSourceApi;
   contextSrv: ContextSrv;
   datasourceSrv: any;
   timeSrv: any;
   templateSrv: any;
-  declare range: TimeRange;
+  range: TimeRange;
   interval: any;
   intervalMs: any;
   resolution: any;

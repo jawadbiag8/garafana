@@ -1,9 +1,12 @@
+// Libraries
 import React, { Component } from 'react';
 import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux';
-import AutoSizer from 'react-virtualized-auto-sizer';
+// Components
 import { DashboardPanel } from '../dashgrid/DashboardPanel';
+// Redux
 import { initDashboard } from '../state/initDashboard';
+// Types
 import { StoreState } from 'app/types';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
@@ -85,24 +88,7 @@ export class SoloPanelPage extends Component<Props, State> {
 
     return (
       <div className="panel-solo">
-        <AutoSizer>
-          {({ width, height }) => {
-            if (width === 0) {
-              return null;
-            }
-            return (
-              <DashboardPanel
-                width={width}
-                height={height}
-                dashboard={dashboard}
-                panel={panel}
-                isEditing={false}
-                isViewing={false}
-                isInView={true}
-              />
-            );
-          }}
-        </AutoSizer>
+        <DashboardPanel dashboard={dashboard} panel={panel} isEditing={false} isViewing={false} isInView={true} />
       </div>
     );
   }

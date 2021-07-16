@@ -196,20 +196,12 @@ export class PostgresQueryCtrl extends QueryCtrl {
           icon: 'exclamation-triangle',
           yesText: 'Switch',
           onConfirm: () => {
-            // This could be called from React, so wrap in $evalAsync.
-            // Will then either run as part of the current digest cycle or trigger a new one.
-            this.$scope.$evalAsync(() => {
-              this.target.rawQuery = !this.target.rawQuery;
-            });
+            this.target.rawQuery = !this.target.rawQuery;
           },
         })
       );
     } else {
-      // This could be called from React, so wrap in $evalAsync.
-      // Will then either run as part of the current digest cycle or trigger a new one.
-      this.$scope.$evalAsync(() => {
-        this.target.rawQuery = !this.target.rawQuery;
-      });
+      this.target.rawQuery = !this.target.rawQuery;
     }
   }
 

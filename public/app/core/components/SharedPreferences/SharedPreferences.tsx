@@ -90,7 +90,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
 
   onSubmitForm = async () => {
     const { homeDashboardId, theme, timezone } = this.state;
-    await this.service.update({ homeDashboardId, theme, timezone });
+    this.service.update({ homeDashboardId, theme, timezone });
     window.location.reload();
   };
 
@@ -98,7 +98,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
     this.setState({ theme: value });
   };
 
-  onTimeZoneChanged = (timezone?: string) => {
+  onTimeZoneChanged = (timezone: string) => {
     if (!timezone) {
       return;
     }
@@ -109,7 +109,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
     this.setState({ homeDashboardId: dashboardId });
   };
 
-  getFullDashName = (dashboard: SelectableValue<DashboardSearchHit>) => {
+  getFullDashName = (dashboard: DashboardSearchHit) => {
     if (typeof dashboard.folderTitle === 'undefined' || dashboard.folderTitle === '') {
       return dashboard.title;
     }
@@ -148,9 +148,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
                   value={dashboards.find((dashboard) => dashboard.id === homeDashboardId)}
                   getOptionValue={(i) => i.id}
                   getOptionLabel={this.getFullDashName}
-                  onChange={(dashboard: SelectableValue<DashboardSearchHit>) =>
-                    this.onHomeDashboardChanged(dashboard.id)
-                  }
+                  onChange={(dashboard: DashboardSearchHit) => this.onHomeDashboardChanged(dashboard.id)}
                   options={dashboards}
                   placeholder="Choose default dashboard"
                 />

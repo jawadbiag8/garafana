@@ -7,16 +7,14 @@ import {
   VariableSuggestionsScope,
   DynamicConfigValue,
   ConfigOverrideRule,
-  GrafanaTheme2,
 } from '@grafana/data';
-import { fieldMatchersUI, useStyles2, ValuePicker } from '@grafana/ui';
+import { Container, fieldMatchersUI, ValuePicker } from '@grafana/ui';
 import { OptionPaneRenderProps } from './types';
 import { OptionsPaneItemDescriptor } from './OptionsPaneItemDescriptor';
 import { OptionsPaneCategoryDescriptor } from './OptionsPaneCategoryDescriptor';
 import { DynamicConfigValueEditor } from './DynamicConfigValueEditor';
 import { getDataLinksVariableSuggestions } from 'app/features/panel/panellinks/link_srv';
 import { OverrideCategoryTitle } from './OverrideCategoryTitle';
-import { css } from '@emotion/css';
 
 export function getFieldOverrideCategories(props: OptionPaneRenderProps): OptionsPaneCategoryDescriptor[] {
   const categories: OptionsPaneCategoryDescriptor[] = [];
@@ -210,7 +208,7 @@ export function getFieldOverrideCategories(props: OptionPaneRenderProps): Option
       id: 'add button',
       customRender: function renderAddButton() {
         return (
-          <AddOverrideButtonContainer key="Add override">
+          <Container padding="md" key="Add override">
             <ValuePicker
               icon="plus"
               label="Add field override"
@@ -224,11 +222,21 @@ export function getFieldOverrideCategories(props: OptionPaneRenderProps): Option
                 .map<SelectableValue<string>>((i) => ({ label: i.name, value: i.id, description: i.description }))}
               onChange={(value) => onOverrideAdd(value)}
             />
-          </AddOverrideButtonContainer>
+          </Container>
         );
       },
     })
   );
+
+  //   <FeatureInfoBox
+  //   title="Overrides"
+  //   url={getDocsLink(DocsId.FieldConfigOverrides)}
+  //   className={css`
+  //     margin: ${theme.spacing.md};
+  //   `}
+  // >
+  //   Field override rules give you fine-grained control over how your data is displayed.
+  // </FeatureInfoBox>
 
   return categories;
 }
@@ -248,16 +256,4 @@ function getOverrideProperties(registry: FieldConfigOptionsRegistry) {
         description: item.description,
       };
     });
-}
-
-function AddOverrideButtonContainer({ children }: { children: React.ReactNode }) {
-  const styles = useStyles2(getBorderTopStyles);
-  return <div className={styles}>{children}</div>;
-}
-
-function getBorderTopStyles(theme: GrafanaTheme2) {
-  return css({
-    borderTop: `1px solid ${theme.colors.border.weak}`,
-    padding: `${theme.spacing(2)}`,
-  });
 }

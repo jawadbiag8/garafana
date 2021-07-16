@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { hot } from 'react-hot-loader';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { NavModel } from '@grafana/data';
 import { getNavModel } from 'app/core/selectors/navModel';
 import config from 'app/core/config';
@@ -29,17 +29,39 @@ import { UserOrgs } from './UserOrgs';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { contextSrv } from 'app/core/core';
 
-interface OwnProps extends GrafanaRouteComponentProps<{ id: string }> {
+interface Props extends GrafanaRouteComponentProps<{ id: string }> {
   navModel: NavModel;
-  user?: UserDTO;
+  user: UserDTO;
   orgs: UserOrg[];
   sessions: UserSession[];
-  ldapSyncInfo?: SyncInfo;
+  ldapSyncInfo: SyncInfo;
   isLoading: boolean;
-  error?: UserAdminError;
+  error: UserAdminError;
+
+  loadAdminUserPage: typeof loadAdminUserPage;
+  revokeSession: typeof revokeSession;
+  revokeAllSessions: typeof revokeAllSessions;
+  updateUser: typeof updateUser;
+  setUserPassword: typeof setUserPassword;
+  disableUser: typeof disableUser;
+  enableUser: typeof enableUser;
+  deleteUser: typeof deleteUser;
+  updateUserPermissions: typeof updateUserPermissions;
+  addOrgUser: typeof addOrgUser;
+  updateOrgUserRole: typeof updateOrgUserRole;
+  deleteOrgUser: typeof deleteOrgUser;
+  syncLdapUser: typeof syncLdapUser;
 }
 
-export class UserAdminPage extends PureComponent<Props> {
+interface State {
+  // isLoading: boolean;
+}
+
+export class UserAdminPage extends PureComponent<Props, State> {
+  state = {
+    // isLoading: true,
+  };
+
   async componentDidMount() {
     const { match, loadAdminUserPage } = this.props;
     loadAdminUserPage(parseInt(match.params.id, 10));
@@ -51,7 +73,7 @@ export class UserAdminPage extends PureComponent<Props> {
 
   onPasswordChange = (password: string) => {
     const { user, setUserPassword } = this.props;
-    user && setUserPassword(user.id, password);
+    setUserPassword(user.id, password);
   };
 
   onUserDelete = (userId: number) => {
@@ -68,41 +90,42 @@ export class UserAdminPage extends PureComponent<Props> {
 
   onGrafanaAdminChange = (isGrafanaAdmin: boolean) => {
     const { user, updateUserPermissions } = this.props;
-    user && updateUserPermissions(user.id, isGrafanaAdmin);
+    updateUserPermissions(user.id, isGrafanaAdmin);
   };
 
   onOrgRemove = (orgId: number) => {
     const { user, deleteOrgUser } = this.props;
-    user && deleteOrgUser(user.id, orgId);
+    deleteOrgUser(user.id, orgId);
   };
 
   onOrgRoleChange = (orgId: number, newRole: string) => {
     const { user, updateOrgUserRole } = this.props;
-    user && updateOrgUserRole(user.id, orgId, newRole);
+    updateOrgUserRole(user.id, orgId, newRole);
   };
 
   onOrgAdd = (orgId: number, role: string) => {
     const { user, addOrgUser } = this.props;
-    user && addOrgUser(user, orgId, role);
+    addOrgUser(user, orgId, role);
   };
 
   onSessionRevoke = (tokenId: number) => {
     const { user, revokeSession } = this.props;
-    user && revokeSession(tokenId, user.id);
+    revokeSession(tokenId, user.id);
   };
 
   onAllSessionsRevoke = () => {
     const { user, revokeAllSessions } = this.props;
-    user && revokeAllSessions(user.id);
+    revokeAllSessions(user.id);
   };
 
   onUserSync = () => {
     const { user, syncLdapUser } = this.props;
-    user && syncLdapUser(user.id);
+    syncLdapUser(user.id);
   };
 
   render() {
     const { navModel, user, orgs, sessions, ldapSyncInfo, isLoading } = this.props;
+    // const { isLoading } = this.state;
     const isLDAPUser = user && user.isExternal && user.authLabels && user.authLabels.includes('LDAP');
     const canReadSessions = contextSrv.hasPermission(AccessControlAction.UsersAuthTokenList);
     const canReadLDAPStatus = contextSrv.hasPermission(AccessControlAction.LDAPStatusRead);
@@ -175,6 +198,4 @@ const mapDispatchToProps = {
   syncLdapUser,
 };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type Props = OwnProps & ConnectedProps<typeof connector>;
-export default hot(module)(connector(UserAdminPage));
+export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(UserAdminPage));

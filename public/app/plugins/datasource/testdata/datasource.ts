@@ -12,7 +12,6 @@ import {
   LiveChannelScope,
   LoadingState,
   TimeRange,
-  ScopedVars,
 } from '@grafana/data';
 import { Scenario, TestDataQuery } from './types';
 import { DataSourceWithBackend, getBackendSrv, getGrafanaLiveSrv, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
@@ -42,8 +41,6 @@ export class TestDataDataSource extends DataSourceWithBackend<TestDataQuery> {
       if (target.hide) {
         continue;
       }
-
-      this.resolveTemplateVariables(target, options.scopedVars);
 
       switch (target.scenarioId) {
         case 'live':
@@ -99,10 +96,6 @@ export class TestDataDataSource extends DataSourceWithBackend<TestDataQuery> {
     }
 
     return merge(...streams);
-  }
-
-  resolveTemplateVariables(query: TestDataQuery, scopedVars: ScopedVars) {
-    query.labels = this.templateSrv.replace(query.labels!, scopedVars);
   }
 
   annotationDataTopicTest(target: TestDataQuery, req: DataQueryRequest<TestDataQuery>): Observable<DataQueryResponse> {

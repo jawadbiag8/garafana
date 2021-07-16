@@ -133,7 +133,6 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
     // if we just got dashboard update title
     if (prevProps.dashboard !== dashboard) {
       document.title = dashboard.title + ' - ' + Branding.AppTitle;
-     // document.title = dashboard.title + ' - ' + Branding.AppTitle;
     }
 
     if (
@@ -149,7 +148,7 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
       const prevUrlParams = prevProps.queryParams;
       const urlParams = this.props.queryParams;
 
-      if (urlParams?.from !== prevUrlParams?.from || urlParams?.to !== prevUrlParams?.to) {
+      if (urlParams?.from !== prevUrlParams?.from && urlParams?.to !== prevUrlParams?.to) {
         getTimeSrv().updateTimeRangeFromUrl();
       }
 

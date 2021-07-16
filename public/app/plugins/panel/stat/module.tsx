@@ -1,9 +1,4 @@
-import {
-  BigValueColorMode,
-  BigValueTextMode,
-  commonOptionsBuilder,
-  sharedSingleStatMigrationHandler,
-} from '@grafana/ui';
+import { BigValueTextMode, commonOptionsBuilder, sharedSingleStatMigrationHandler } from '@grafana/ui';
 import { PanelPlugin } from '@grafana/data';
 import { addOrientationOption, addStandardDataReduceOptions, StatPanelOptions } from './types';
 import { StatPanel } from './StatPanel';
@@ -39,13 +34,12 @@ export const plugin = new PanelPlugin<StatPanelOptions>(StatPanel)
       .addRadio({
         path: 'colorMode',
         name: 'Color mode',
-        defaultValue: BigValueColorMode.Value,
+        defaultValue: 'value',
         category: mainCategory,
         settings: {
           options: [
-            { value: BigValueColorMode.None, label: 'None' },
-            { value: BigValueColorMode.Value, label: 'Value' },
-            { value: BigValueColorMode.Background, label: 'Background' },
+            { value: 'value', label: 'Value' },
+            { value: 'background', label: 'Background' },
           ],
         },
       })

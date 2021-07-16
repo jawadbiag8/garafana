@@ -54,6 +54,7 @@ export const OptionsPaneCategory: FC<OptionsPaneCategoryProps> = React.memo(
     const boxStyles = cx(
       {
         [styles.box]: true,
+        [styles.boxExpanded]: isExpanded,
         [styles.boxNestedExpanded]: isNested && isExpanded,
       },
       className,
@@ -92,7 +93,13 @@ export const OptionsPaneCategory: FC<OptionsPaneCategoryProps> = React.memo(
 const getStyles = (theme: GrafanaTheme2) => {
   return {
     box: css`
-      border-top: 1px solid ${theme.colors.border.weak};
+      border-bottom: 1px solid ${theme.colors.border.weak};
+      &:last-child {
+        border-bottom: none;
+      }
+    `,
+    boxExpanded: css`
+      border-bottom: 0;
     `,
     boxNestedExpanded: css`
       margin-bottom: ${theme.spacing(2)};

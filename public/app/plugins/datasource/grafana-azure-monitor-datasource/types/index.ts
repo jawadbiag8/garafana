@@ -83,15 +83,11 @@ export interface AzureDataSourceJsonData extends DataSourceJsonData {
   subscriptionId?: string;
 
   // logs
-  logAnalyticsDefaultWorkspace?: string;
-  /** @deprecated Azure Logs credentials */
   azureLogAnalyticsSameAs?: boolean;
-  /** @deprecated Azure Logs credentials */
   logAnalyticsTenantId?: string;
-  /** @deprecated Azure Logs credentials */
   logAnalyticsClientId?: string;
-  /** @deprecated Azure Logs credentials */
   logAnalyticsSubscriptionId?: string;
+  logAnalyticsDefaultWorkspace?: string;
 
   // App Insights
   appInsightsAppId?: string;
@@ -99,6 +95,7 @@ export interface AzureDataSourceJsonData extends DataSourceJsonData {
 
 export interface AzureDataSourceSecureJsonData {
   clientSecret?: string;
+  logAnalyticsClientSecret?: string;
   appInsightsApiKey?: string;
 }
 

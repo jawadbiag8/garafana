@@ -7,16 +7,20 @@ export default class UrlBuilder {
     resourceName: string,
     apiVersion: string
   ) {
-    const metricDefinitionArray = metricDefinition.split('/');
-    const resourceNameArray = resourceName.split('/');
-    const provider = metricDefinitionArray.shift();
-    const urlArray = [baseUrl, subscriptionId, 'resourceGroups', resourceGroup, 'providers', provider];
-    for (const i in metricDefinitionArray) {
-      urlArray.push(metricDefinitionArray[i]);
-      urlArray.push(resourceNameArray[i]);
+    if ((metricDefinition.match(/\//g) || []).length > 1) {
+      const rn = resourceName.split('/');
+      const service = metricDefinition.substring(metricDefinition.lastIndexOf('/') + 1);
+      const md = metricDefinition.substring(0, metricDefinition.lastIndexOf('/'));
+      return (
+        `${baseUrl}/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${md}/${rn[0]}/${service}/${rn[1]}` +
+        `/providers/microsoft.insights/metricNamespaces?api-version=${apiVersion}`
+      );
     }
-    const urlPrefix = urlArray.join('/');
-    return `${urlPrefix}/providers/microsoft.insights/metricNamespaces?api-version=${apiVersion}`;
+
+    return (
+      `${baseUrl}/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${metricDefinition}/${resourceName}` +
+      `/providers/microsoft.insights/metricNamespaces?api-version=${apiVersion}`
+    );
   }
 
   static buildAzureMonitorGetMetricNamesUrl(
@@ -28,18 +32,23 @@ export default class UrlBuilder {
     metricNamespace: string,
     apiVersion: string
   ) {
-    const metricDefinitionArray = metricDefinition.split('/');
-    const resourceNameArray = resourceName.split('/');
-    const provider = metricDefinitionArray.shift();
-    const urlArray = [baseUrl, subscriptionId, 'resourceGroups', resourceGroup, 'providers', provider];
-    for (const i in metricDefinitionArray) {
-      urlArray.push(metricDefinitionArray[i]);
-      urlArray.push(resourceNameArray[i]);
+    if ((metricDefinition.match(/\//g) || []).length > 1) {
+      const rn = resourceName.split('/');
+      const service = metricDefinition.substring(metricDefinition.lastIndexOf('/') + 1);
+      const md = metricDefinition.substring(0, metricDefinition.lastIndexOf('/'));
+      return (
+        `${baseUrl}/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${md}/${rn[0]}/${service}/${rn[1]}` +
+        `/providers/microsoft.insights/metricdefinitions?api-version=${apiVersion}&metricnamespace=${encodeURIComponent(
+          metricNamespace
+        )}`
+      );
     }
-    const urlPrefix = urlArray.join('/');
+
     return (
-      `${urlPrefix}/providers/microsoft.insights/metricdefinitions?api-version=${apiVersion}` +
-      `&metricnamespace=${encodeURIComponent(metricNamespace)}`
+      `${baseUrl}/${subscriptionId}/resourceGroups/${resourceGroup}/providers/${metricDefinition}/${resourceName}` +
+      `/providers/microsoft.insights/metricdefinitions?api-version=${apiVersion}&metricnamespace=${encodeURIComponent(
+        metricNamespace
+      )}`
     );
   }
 }

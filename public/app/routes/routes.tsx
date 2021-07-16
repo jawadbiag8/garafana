@@ -279,13 +279,6 @@ export function getAppRoutes(): RouteDescriptor[] {
       pageClass: 'sidemenu-hidden',
     },
     {
-      path: '/verify',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName "VerifyEmailPage"*/ 'app/core/components/Signup/VerifyEmailPage')
-      ),
-      pageClass: 'login-page sidemenu-hidden',
-    },
-    {
       path: '/signup',
       component: SignupPage,
       pageClass: 'sidemenu-hidden login-page',

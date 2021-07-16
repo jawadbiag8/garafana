@@ -1,8 +1,8 @@
-import { CombinedRule } from 'app/types/unified-alerting';
+import { CombinedRule, RulesSource } from 'app/types/unified-alerting';
 import React, { FC, useMemo } from 'react';
-import { useStyles2 } from '@grafana/ui';
+import { useStyles } from '@grafana/ui';
 import { css, cx } from '@emotion/css';
-import { GrafanaTheme2 } from '@grafana/data';
+import { GrafanaTheme } from '@grafana/data';
 import { isAlertingRule, isGrafanaRulerRule } from '../../utils/rules';
 import { isCloudRulesSource } from '../../utils/datasource';
 import { AnnotationDetailsField } from '../AnnotationDetailsField';
@@ -16,15 +16,13 @@ import { RuleDetailsActionButtons } from './RuleDetailsActionButtons';
 
 interface Props {
   rule: CombinedRule;
+  rulesSource: RulesSource;
 }
 
-export const RuleDetails: FC<Props> = ({ rule }) => {
-  const styles = useStyles2(getStyles);
+export const RuleDetails: FC<Props> = ({ rule, rulesSource }) => {
+  const styles = useStyles(getStyles);
 
-  const {
-    promRule,
-    namespace: { rulesSource },
-  } = rule;
+  const { promRule } = rule;
 
   const annotations = Object.entries(rule.annotations).filter(([_, value]) => !!value.trim());
 
@@ -100,28 +98,23 @@ export const RuleDetails: FC<Props> = ({ rule }) => {
   );
 };
 
-export const getStyles = (theme: GrafanaTheme2) => ({
+export const getStyles = (theme: GrafanaTheme) => ({
   wrapper: css`
     display: flex;
     flex-direction: row;
-    ${theme.breakpoints.down('md')} {
-      flex-direction: column;
-    }
   `,
   leftSide: css`
     flex: 1;
   `,
   rightSide: css`
-    ${theme.breakpoints.up('md')} {
-      padding-left: 90px;
-      width: 300px;
-    }
+    padding-left: 90px;
+    width: 300px;
   `,
   exprRow: css`
     margin-bottom: 46px;
   `,
   dataSourceIcon: css`
-    width: ${theme.spacing(2)};
-    height: ${theme.spacing(2)};
+    width: ${theme.spacing.md};
+    height: ${theme.spacing.md};
   `,
 });

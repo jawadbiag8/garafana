@@ -49,7 +49,7 @@ export const dataSourceVariableSlice = createSlice({
           options.push({ text: source.name, value: source.name, selected: false });
         }
 
-        if (isDefault(source, regex)) {
+        if (source.isDefault) {
           options.push({ text: 'default', value: 'default', selected: false });
         }
       }
@@ -72,19 +72,7 @@ function isValid(source: DataSourceInstanceSettings, regex?: RegExp) {
     return true;
   }
 
-  return regex.exec(source.name);
-}
-
-function isDefault(source: DataSourceInstanceSettings, regex?: RegExp) {
-  if (!source.isDefault) {
-    return false;
-  }
-
-  if (!regex) {
-    return true;
-  }
-
-  return regex.exec('default');
+  return regex && regex.exec(source.name);
 }
 
 export const dataSourceVariableReducer = dataSourceVariableSlice.reducer;

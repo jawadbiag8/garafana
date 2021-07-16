@@ -3,7 +3,7 @@ import { css } from '@emotion/css';
 import { GrafanaTheme2 } from '@grafana/data';
 import { Button, useStyles2 } from '@grafana/ui';
 import { AmRouteReceiver, FormAmRoute } from '../../types/amroutes';
-import { emptyArrayFieldMatcher, emptyRoute } from '../../utils/amroutes';
+import { emptyRoute } from '../../utils/amroutes';
 import { EmptyArea } from '../EmptyArea';
 import { AmRoutesTable } from './AmRoutesTable';
 
@@ -22,13 +22,7 @@ export const AmSpecificRouting: FC<AmSpecificRoutingProps> = ({ onChange, onRoot
 
   const addNewRoute = () => {
     setIsAddMode(true);
-    setActualRoutes((actualRoutes) => [
-      ...actualRoutes,
-      {
-        ...emptyRoute,
-        matchers: [emptyArrayFieldMatcher],
-      },
-    ]);
+    setActualRoutes((actualRoutes) => [...actualRoutes, emptyRoute]);
   };
 
   return (

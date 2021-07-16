@@ -17,6 +17,10 @@
 }
 
 .panel-in-fullscreen {
+  .react-grid-layout {
+    height: 90% !important;
+  }
+
   .react-grid-item {
     display: none !important;
     transition-property: none !important;
@@ -24,6 +28,8 @@
     &--fullscreen {
       display: block !important;
       position: unset !important;
+      width: 100% !important;
+      height: 100% !important;
       transform: translate(0px, 0px) !important;
     }
   }
@@ -48,10 +54,15 @@
 }
 
 @include media-breakpoint-down(sm) {
+  .react-grid-layout {
+    height: 100% !important;
+  }
+
   .react-grid-item {
     display: block !important;
     transition-property: none !important;
     position: unset !important;
+    width: 100% !important;
     transform: translate(0px, 0px) !important;
     margin-bottom: $space-md;
   }

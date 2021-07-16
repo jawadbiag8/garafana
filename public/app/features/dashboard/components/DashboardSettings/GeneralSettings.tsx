@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { TimeZone } from '@grafana/data';
 import { TagsInput, Input, Field, CollapsableSection, RadioButtonGroup } from '@grafana/ui';
 import { selectors } from '@grafana/e2e-selectors';
@@ -8,13 +7,9 @@ import { DashboardModel } from '../../state/DashboardModel';
 import { DeleteDashboardButton } from '../DeleteDashboard/DeleteDashboardButton';
 import { TimePickerSettings } from './TimePickerSettings';
 
-import { updateTimeZoneDashboard } from 'app/features/dashboard/state/actions';
-
-interface OwnProps {
+interface Props {
   dashboard: DashboardModel;
 }
-
-export type Props = OwnProps & ConnectedProps<typeof connector>;
 
 const GRAPH_TOOLTIP_OPTIONS = [
   { value: 0, label: 'Default' },
@@ -22,7 +17,7 @@ const GRAPH_TOOLTIP_OPTIONS = [
   { value: 2, label: 'Shared Tooltip' },
 ];
 
-export function GeneralSettingsUnconnected({ dashboard, updateTimeZone }: Props): JSX.Element {
+export const GeneralSettings: React.FC<Props> = ({ dashboard }) => {
   const [renderCounter, setRenderCounter] = useState(0);
 
   const onFolderChange = (folder: { id: number; title: string }) => {
@@ -56,7 +51,6 @@ export function GeneralSettingsUnconnected({ dashboard, updateTimeZone }: Props)
   const onTimeZoneChange = (timeZone: TimeZone) => {
     dashboard.timezone = timeZone;
     setRenderCounter(renderCounter + 1);
-    updateTimeZone(timeZone);
   };
 
   const onTagsChange = (tags: string[]) => {
@@ -132,12 +126,4 @@ export function GeneralSettingsUnconnected({ dashboard, updateTimeZone }: Props)
       </div>
     </div>
   );
-}
-
-const mapDispatchToProps = {
-  updateTimeZone: updateTimeZoneDashboard,
 };
-
-const connector = connect(null, mapDispatchToProps);
-
-export const GeneralSettings = connector(GeneralSettingsUnconnected);

@@ -1,19 +1,20 @@
 // Libraries
 import React, { Component } from 'react';
 import { dateMath, TimeRange, TimeZone } from '@grafana/data';
+import { css } from '@emotion/css';
 
 // Types
 import { DashboardModel } from '../../state';
+import { CoreEvents } from 'app/types';
 
 // Components
-import { defaultIntervals, RefreshPicker, ToolbarButtonRow } from '@grafana/ui';
+import { defaultIntervals, RefreshPicker, stylesFactory } from '@grafana/ui';
 import { TimePickerWithHistory } from 'app/core/components/TimePicker/TimePickerWithHistory';
 
 // Utils & Services
 import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { appEvents } from 'app/core/core';
-import { ShiftTimeEvent, ShiftTimeEventPayload, TimeRangeUpdatedEvent, ZoomOutEvent } from '../../../../types/events';
-import { Unsubscribable } from 'rxjs';
+import { ShiftTimeEvent, ShiftTimeEventPayload, ZoomOutEvent } from '../../../../types/events';
 
 export interface Props {
   dashboard: DashboardModel;
@@ -21,15 +22,20 @@ export interface Props {
 }
 
 export class DashNavTimeControls extends Component<Props> {
-  private sub?: Unsubscribable;
-
   componentDidMount() {
-    this.sub = this.props.dashboard.events.subscribe(TimeRangeUpdatedEvent, () => this.forceUpdate());
+    // Only reason for this is that sometimes time updates can happen via redux location changes
+    // and this happens before timeSrv has had chance to update state (as it listens to angular route-updated)
+    // This can be removed after timeSrv listens redux location
+    this.props.dashboard.on(CoreEvents.timeRangeUpdated, this.triggerForceUpdate);
   }
 
   componentWillUnmount() {
-    this.sub?.unsubscribe();
+    this.props.dashboard.off(CoreEvents.timeRangeUpdated, this.triggerForceUpdate);
   }
+
+  triggerForceUpdate = () => {
+    this.forceUpdate();
+  };
 
   onChangeRefreshInterval = (interval: string) => {
     getTimeSrv().setAutoRefresh(interval);
@@ -81,10 +87,11 @@ export class DashNavTimeControls extends Component<Props> {
 
     const timePickerValue = getTimeSrv().timeRange();
     const timeZone = dashboard.getTimezone();
+    const styles = getStyles();
     const hideIntervalPicker = dashboard.panelInEdit?.isEditing;
 
     return (
-      <ToolbarButtonRow>
+      <div className={styles.container}>
         <TimePickerWithHistory
           value={timePickerValue}
           onChange={this.onChangeTimePicker}
@@ -102,7 +109,16 @@ export class DashNavTimeControls extends Component<Props> {
           tooltip="Refresh dashboard"
           noIntervalPicker={hideIntervalPicker}
         />
-      </ToolbarButtonRow>
+      </div>
     );
   }
 }
+
+const getStyles = stylesFactory(() => {
+  return {
+    container: css`
+      position: relative;
+      display: flex;
+    `,
+  };
+});

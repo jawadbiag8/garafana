@@ -1,12 +1,8 @@
 import React, { PureComponent } from 'react';
 import { QueryEditorHelpProps } from '@grafana/data';
 import { css } from '@emotion/css';
-import { CloudMonitoringQuery } from '../types';
 
-export default class CloudMonitoringCheatSheet extends PureComponent<
-  QueryEditorHelpProps<CloudMonitoringQuery>,
-  { userExamples: string[] }
-> {
+export default class CloudMonitoringCheatSheet extends PureComponent<QueryEditorHelpProps, { userExamples: string[] }> {
   render() {
     return (
       <div>

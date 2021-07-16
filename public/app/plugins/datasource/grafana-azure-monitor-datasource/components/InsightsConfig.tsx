@@ -23,9 +23,6 @@ export class InsightsConfig extends PureComponent<Props> {
     return (
       <>
         <h3 className="page-heading">Azure Application Insights</h3>
-        <Alert severity="info" title="Application Insights credentials are deprecated">
-          Configure using Azure AD App Registration above and update existing queries to use Metrics or Logs.
-        </Alert>
         <div className="gf-form-group">
           {options.secureJsonFields.appInsightsApiKey ? (
             <div className="gf-form-inline">
@@ -35,12 +32,7 @@ export class InsightsConfig extends PureComponent<Props> {
               </div>
               <div className="gf-form">
                 <div className="max-width-30 gf-form-inline">
-                  <Button
-                    variant="secondary"
-                    type="button"
-                    onClick={this.onAppInsightsResetApiKey}
-                    disabled={this.props.options.readOnly}
-                  >
+                  <Button variant="secondary" type="button" onClick={this.onAppInsightsResetApiKey}>
                     reset
                   </Button>
                 </div>
@@ -56,7 +48,6 @@ export class InsightsConfig extends PureComponent<Props> {
                     placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
                     value={options.secureJsonData!.appInsightsApiKey || ''}
                     onChange={onUpdateSecureJsonDataOption('appInsightsApiKey')}
-                    disabled={this.props.options.readOnly}
                   />
                 </div>
               </div>
@@ -70,12 +61,15 @@ export class InsightsConfig extends PureComponent<Props> {
                   className="width-30"
                   value={options.jsonData.appInsightsAppId || ''}
                   onChange={onUpdateJsonDataOption('appInsightsAppId')}
-                  disabled={this.props.options.readOnly}
                 />
               </div>
             </div>
           </div>
         </div>
+
+        <Alert severity="info" title="Application Insights credentials are deprecated">
+          Configure using Azure AD App Registration above and update existing queries to use Metrics or Logs.
+        </Alert>
       </>
     );
   }

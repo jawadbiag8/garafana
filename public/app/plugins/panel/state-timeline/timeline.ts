@@ -5,7 +5,7 @@ import { distribute, SPACE_BETWEEN } from 'app/plugins/panel/barchart/distribute
 import { TimelineFieldConfig, TimelineMode, TimelineValueAlignment } from './types';
 import { GrafanaTheme2, TimeRange } from '@grafana/data';
 import { BarValueVisibility } from '@grafana/ui';
-import { alpha } from '@grafana/data/src/themes/colorManipulator';
+import tinycolor from 'tinycolor2';
 
 const { round, min, ceil } = Math;
 
@@ -371,10 +371,10 @@ export function getConfig(opts: TimelineCoreOptions) {
 
     if (o) {
       h.style.display = '';
-      h.style.left = round(o.x / pxRatio) + 'px';
-      h.style.top = round(o.y / pxRatio) + 'px';
-      h.style.width = round(o.w / pxRatio) + 'px';
-      h.style.height = round(o.h / pxRatio) + 'px';
+      h.style.left = round(o!.x / pxRatio) + 'px';
+      h.style.top = round(o!.y / pxRatio) + 'px';
+      h.style.width = round(o!.w / pxRatio) + 'px';
+      h.style.height = round(o!.h / pxRatio) + 'px';
     } else {
       h.style.display = 'none';
     }
@@ -382,13 +382,13 @@ export function getConfig(opts: TimelineCoreOptions) {
     hovered[i] = o;
   }
 
-  let hoveredAtCursor: Rect | undefined;
+  let hoveredAtCursor: Rect | null = null;
 
   function hoverMulti(cx: number, cy: number) {
-    let foundAtCursor: Rect | undefined;
+    let foundAtCursor: Rect | null = null;
 
     for (let i = 0; i < numSeries; i++) {
-      let found: Rect | undefined;
+      let found: Rect | null = null;
 
       if (cx >= 0) {
         let cy2 = yMids[i];
@@ -416,16 +416,16 @@ export function getConfig(opts: TimelineCoreOptions) {
     if (foundAtCursor) {
       if (foundAtCursor !== hoveredAtCursor) {
         hoveredAtCursor = foundAtCursor;
-        onHover(foundAtCursor.sidx, foundAtCursor.didx, foundAtCursor);
+        onHover(foundAtCursor!.sidx, foundAtCursor!.didx, foundAtCursor);
       }
     } else if (hoveredAtCursor) {
-      hoveredAtCursor = undefined;
+      hoveredAtCursor = null;
       onLeave();
     }
   }
 
   function hoverOne(cx: number, cy: number) {
-    let foundAtCursor: Rect | undefined;
+    let foundAtCursor: Rect | null = null;
 
     qt.get(cx, cy, 1, 1, (o) => {
       if (pointWithin(cx, cy, o.x, o.y, o.x + o.w, o.y + o.h)) {
@@ -438,11 +438,11 @@ export function getConfig(opts: TimelineCoreOptions) {
 
       if (foundAtCursor !== hoveredAtCursor) {
         hoveredAtCursor = foundAtCursor;
-        onHover(foundAtCursor.sidx, foundAtCursor.didx, foundAtCursor);
+        onHover(foundAtCursor!.sidx, foundAtCursor!.didx, foundAtCursor);
       }
     } else if (hoveredAtCursor) {
       setHoverMark(0, null);
-      hoveredAtCursor = undefined;
+      hoveredAtCursor = null;
       onLeave();
     }
   }
@@ -450,8 +450,8 @@ export function getConfig(opts: TimelineCoreOptions) {
   const doHover = mode === TimelineMode.Changes ? hoverMulti : hoverOne;
 
   const setCursor = (u: uPlot) => {
-    let cx = round(u.cursor.left! * pxRatio);
-    let cy = round(u.cursor.top! * pxRatio);
+    let cx = round(u.cursor!.left! * pxRatio);
+    let cy = round(u.cursor!.top! * pxRatio);
 
     // if quadtree is empty, fill it
     if (!qt.o.length && qt.q == null) {
@@ -548,5 +548,5 @@ export function getConfig(opts: TimelineCoreOptions) {
 
 function getFillColor(fieldConfig: TimelineFieldConfig, color: string) {
   const opacityPercent = (fieldConfig.fillOpacity ?? 100) / 100;
-  return alpha(color, opacityPercent);
+  return tinycolor(color).setAlpha(opacityPercent).toString();
 }

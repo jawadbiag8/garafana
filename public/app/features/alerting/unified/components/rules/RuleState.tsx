@@ -49,14 +49,14 @@ export const RuleState: FC<Props> = ({ rule, isDeleting, isCreating }) => {
 
   if (isDeleting) {
     return (
-      <HorizontalGroup align="flex-start">
+      <HorizontalGroup>
         <Spinner />
         deleting
       </HorizontalGroup>
     );
   } else if (isCreating) {
     return (
-      <HorizontalGroup align="flex-start">
+      <HorizontalGroup>
         {' '}
         <Spinner />
         creating
@@ -64,7 +64,7 @@ export const RuleState: FC<Props> = ({ rule, isDeleting, isCreating }) => {
     );
   } else if (promRule && isAlertingRule(promRule)) {
     return (
-      <HorizontalGroup align="flex-start">
+      <HorizontalGroup>
         <AlertStateTag state={promRule.state} />
         {forTime}
       </HorizontalGroup>

@@ -1,32 +1,30 @@
-import { GrafanaTheme2 } from '@grafana/data';
-import { Icon, InlineSegmentGroup, useTheme2 } from '@grafana/ui';
+import { GrafanaTheme } from '@grafana/data';
+import { Icon, InlineSegmentGroup, stylesFactory, useTheme } from '@grafana/ui';
 import { css, cx } from '@emotion/css';
 import React, { PropsWithChildren, useState } from 'react';
 import { segmentStyles } from './styles';
 
-const getStyles = (theme: GrafanaTheme2, hidden: boolean) => {
+const getStyles = stylesFactory((theme: GrafanaTheme, hidden: boolean) => {
   return {
     wrapper: css`
-      max-width: 500px;
       display: flex;
       flex-direction: column;
     `,
     settingsWrapper: css`
-      padding-top: ${theme.spacing(0.5)};
+      padding-top: ${theme.spacing.xs};
     `,
     icon: css`
-      margin-right: ${theme.spacing(0.5)};
+      margin-right: ${theme.spacing.xs};
     `,
     button: css`
       justify-content: start;
       ${hidden &&
       css`
-        color: ${theme.colors.text.disabled};
+        color: ${theme.colors.textFaint};
       `}
     `,
   };
-};
-
+});
 interface Props {
   label: string;
   hidden?: boolean;
@@ -34,9 +32,7 @@ interface Props {
 
 export const SettingsEditorContainer = ({ label, children, hidden = false }: PropsWithChildren<Props>) => {
   const [open, setOpen] = useState(false);
-
-  const theme = useTheme2();
-  const styles = getStyles(theme, hidden);
+  const styles = getStyles(useTheme(), hidden);
 
   return (
     <InlineSegmentGroup>

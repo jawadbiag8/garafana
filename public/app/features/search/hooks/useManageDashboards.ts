@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 import { FolderDTO } from 'app/types';
 import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardQuery, DashboardSection, OnDeleteItems, OnMoveItems, OnToggleChecked } from '../types';
@@ -23,12 +23,9 @@ export const useManageDashboards = (
     dispatch,
   } = useSearch<ManageDashboardsState>(query, reducer, {});
 
-  const onToggleChecked: OnToggleChecked = useCallback(
-    (item) => {
-      dispatch({ type: TOGGLE_CHECKED, payload: item });
-    },
-    [dispatch]
-  );
+  const onToggleChecked: OnToggleChecked = (item) => {
+    dispatch({ type: TOGGLE_CHECKED, payload: item });
+  };
 
   const onToggleAllChecked = () => {
     dispatch({ type: TOGGLE_ALL_CHECKED });

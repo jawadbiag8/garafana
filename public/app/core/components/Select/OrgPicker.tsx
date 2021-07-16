@@ -4,7 +4,12 @@ import { getBackendSrv } from 'app/core/services/backend_srv';
 import { Organization } from 'app/types';
 import { SelectableValue } from '@grafana/data';
 
-export type OrgSelectItem = SelectableValue<Organization>;
+export interface OrgSelectItem {
+  id: number;
+  value: number;
+  label: string;
+  name: string;
+}
 
 export interface Props {
   onSelected: (org: OrgSelectItem) => void;
@@ -30,14 +35,16 @@ export class OrgPicker extends PureComponent<Props, State> {
     return orgs;
   }
 
-  getOrgOptions = async (query: string): Promise<OrgSelectItem[]> => {
+  getOrgOptions = async (query: string): Promise<Array<SelectableValue<number>>> => {
     if (!this.orgs?.length) {
       await this.loadOrgs();
     }
     return this.orgs.map(
-      (org: Organization): OrgSelectItem => ({
-        value: { id: org.id, name: org.name },
+      (org: Organization): SelectableValue<number> => ({
+        id: org.id,
+        value: org.id,
         label: org.name,
+        name: org.name,
       })
     );
   };

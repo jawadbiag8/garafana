@@ -1,5 +1,5 @@
 import { SelectableValue } from '@grafana/data';
-import { InlineSegmentGroup, Segment, SegmentAsync, useTheme2 } from '@grafana/ui';
+import { InlineSegmentGroup, Segment, SegmentAsync, useTheme } from '@grafana/ui';
 import { cx } from '@emotion/css';
 import React, { useCallback } from 'react';
 import { useDatasource, useQuery } from '../ElasticsearchQueryContext';
@@ -40,8 +40,7 @@ const isBasicAggregation = (metric: MetricAggregation) => !metricAggregationConf
 
 const getTypeOptions = (
   previousMetrics: MetricAggregation[],
-  esVersion: string,
-  xpack = false
+  esVersion: string
 ): Array<SelectableValue<MetricAggregationType>> => {
   // we'll include Pipeline Aggregations only if at least one previous metric is a "Basic" one
   const includePipelineAggregations = previousMetrics.some(isBasicAggregation);
@@ -52,8 +51,6 @@ const getTypeOptions = (
       .filter(([_, { versionRange = '*' }]) => satisfies(esVersion, versionRange))
       // Filtering out Pipeline Aggregations if there's no basic metric selected before
       .filter(([_, config]) => includePipelineAggregations || !config.isPipelineAgg)
-      // Filtering out X-Pack plugins if X-Pack is disabled
-      .filter(([_, config]) => (config.xpack ? xpack : true))
       .map(([key, { label }]) => ({
         label,
         value: key as MetricAggregationType,
@@ -62,7 +59,7 @@ const getTypeOptions = (
 };
 
 export const MetricEditor = ({ value }: Props) => {
-  const styles = getStyles(useTheme2(), !!value.hide);
+  const styles = getStyles(useTheme(), !!value.hide);
   const datasource = useDatasource();
   const query = useQuery();
   const dispatch = useDispatch<MetricAggregationAction>();
@@ -89,7 +86,7 @@ export const MetricEditor = ({ value }: Props) => {
       <InlineSegmentGroup>
         <Segment
           className={cx(styles.color, segmentStyles)}
-          options={getTypeOptions(previousMetrics, datasource.esVersion, datasource.xpack)}
+          options={getTypeOptions(previousMetrics, datasource.esVersion)}
           onChange={(e) => dispatch(changeMetricType(value.id, e.value!))}
           value={toOption(value)}
         />

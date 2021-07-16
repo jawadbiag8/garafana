@@ -17,7 +17,6 @@ import { LiveTailControls } from './useLiveTailControls';
 import { getFieldLinksForExplore } from './utils/links';
 
 interface LogsContainerProps extends PropsFromRedux {
-  width: number;
   exploreId: ExploreId;
   scanRange?: RawTimeRange;
   syncedTimes: boolean;
@@ -75,7 +74,6 @@ export class LogsContainer extends PureComponent<LogsContainerProps> {
       visibleRange,
       scanning,
       range,
-      width,
       isLive,
       exploreId,
       addResultsToCache,
@@ -121,7 +119,6 @@ export class LogsContainer extends PureComponent<LogsContainerProps> {
               logsMeta={logsMeta}
               logsSeries={logsSeries}
               logsQueries={logsQueries}
-              width={width}
               highlighterExpressions={logsHighlighterExpressions}
               loading={loading}
               onChangeTime={this.onChangeTime}

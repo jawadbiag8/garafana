@@ -4,6 +4,7 @@ import { PageToolbar, Button, useStyles2, CustomScrollbar, Spinner } from '@graf
 import { css } from '@emotion/css';
 
 import { AlertTypeStep } from './AlertTypeStep';
+import { ConditionsStep } from './ConditionsStep';
 import { DetailsStep } from './DetailsStep';
 import { QueryStep } from './QueryStep';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -20,8 +21,6 @@ import { Link } from 'react-router-dom';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 
 import { appEvents } from 'app/core/core';
-import { CloudConditionsStep } from './CloudConditionsStep';
-import { GrafanaConditionsStep } from './GrafanaConditionsStep';
 
 type Props = {
   existing?: RuleWithLocation;
@@ -121,7 +120,7 @@ export const AlertRuleForm: FC<Props> = ({ existing }) => {
               {showStep2 && (
                 <>
                   <QueryStep />
-                  {type === RuleFormType.cloud ? <CloudConditionsStep /> : <GrafanaConditionsStep />}
+                  <ConditionsStep />
                   <DetailsStep />
                 </>
               )}

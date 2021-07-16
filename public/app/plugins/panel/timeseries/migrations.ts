@@ -8,7 +8,7 @@ import {
   FieldMatcherID,
   fieldReducers,
   NullValueMode,
-  PanelTypeChangedHandler,
+  PanelModel,
   Threshold,
   ThresholdsMode,
 } from '@grafana/data';
@@ -32,18 +32,14 @@ import { defaultGraphConfig } from './config';
 /**
  * This is called when the panel changes from another panel
  */
-export const graphPanelChangedHandler: PanelTypeChangedHandler = (
-  panel,
-  prevPluginId,
-  prevOptions,
-  prevFieldConfig
+export const graphPanelChangedHandler = (
+  panel: PanelModel<Partial<TimeSeriesOptions>> | any,
+  prevPluginId: string,
+  prevOptions: any
 ) => {
   // Changing from angular/flot panel to react/uPlot
   if (prevPluginId === 'graph' && prevOptions.angular) {
-    const { fieldConfig, options } = flotToGraphOptions({
-      ...prevOptions.angular,
-      fieldConfig: prevFieldConfig,
-    });
+    const { fieldConfig, options } = flotToGraphOptions(prevOptions.angular);
     panel.fieldConfig = fieldConfig; // Mutates the incoming panel
     return options;
   }
@@ -112,10 +108,9 @@ export function flotToGraphOptions(angular: any): { fieldConfig: FieldConfigSour
       if (!seriesOverride.alias) {
         continue; // the matcher config
       }
-      const aliasIsRegex = seriesOverride.alias.startsWith('/') && seriesOverride.alias.endsWith('/');
       const rule: ConfigOverrideRule = {
         matcher: {
-          id: aliasIsRegex ? FieldMatcherID.byRegexp : FieldMatcherID.byName,
+          id: FieldMatcherID.byName,
           options: seriesOverride.alias,
         },
         properties: [],
@@ -227,15 +222,6 @@ export function flotToGraphOptions(angular: any): { fieldConfig: FieldConfigSour
             rule.properties.push({
               id: 'custom.stacking',
               value: { mode: StackingMode.Normal, group: v },
-            });
-            break;
-          case 'color':
-            rule.properties.push({
-              id: 'color',
-              value: {
-                fixedColor: v,
-                mode: FieldColorModeId.Fixed,
-              },
             });
             break;
           default:
